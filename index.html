@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Minesweeper</title>
+<style>
+  body { text-align: center; font-family: sans-serif; }
+  #board { 
+    display: grid; 
+    grid-template-columns: repeat(9, 35px); 
+    gap: 2px; 
+    justify-content: center; 
+    margin-top: 20px;
+  }
+  .cell {
+    width: 35px;
+    height: 35px;
+    background: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .revealed {
+    background: #eee;
+    cursor: default;
+  }
+</style>
+</head>
+<body>
+
+<h1>Minesweeper</h1>
+<button onclick="init()">Restart</button>
+<div id="board"></div>
+
+<script>
+const SIZE = 9;
+const MINES = 10;
+
+let mines = new Set();
+let revealed = new Set();
+let firstClick = true;
+
+function init() {
+  mines.clear();
+  revealed.clear();
+  firstClick = true;
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.r = r;
+      cell.dataset.c = c;
+      cell.onclick = () => clickCell(r, c);
+      board.appendChild(cell);
+    }
+  }
+}
+
+function placeMines(safeR, safeC) {
+  while (mines.size < MINES) {
+    let r = Math.floor(Math.random() * SIZE);
+    let c = Math.floor(Math.random() * SIZE);
+    if (!(r === safeR && c === safeC)) {
+      mines.add(r + "," + c);
+    }
+  }
+}
+
+function countMines(r, c) {
+  let count = 0;
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      if (dr === 0 && dc === 0) continue;
+      if (mines.has((r+dr) + "," + (c+dc))) count++;
+    }
+  }
+  return count;
+}
+
+function clickCell(r, c) {
+  const key = r + "," + c;
+  if (revealed.has(key)) return;
+
+  if (firstClick) {
+    placeMines(r, c);
+    firstClick = false;
+  }
+
+  const cells = document.getElementsByClassName("cell");
+  const index = r * SIZE + c;
+  const cell = cells[index];
+
+  if (mines.has(key)) {
+    cell.textContent = "💣";
+    alert("Game Over");
+    return;
+  }
+
+  reveal(r, c);
+}
+
+function reveal(r, c) {
+  const key = r + "," + c;
+  if (revealed.has(key)) return;
+  revealed.add(key);
+
+  const cells = document.getElementsByClassName("cell");
+  const index = r * SIZE + c;
+  const cell = cells[index];
+
+  cell.classList.add("revealed");
+
+  let count = countMines(r, c);
+  if (count > 0) {
+    cell.textContent = count;
+  } else {
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        let nr = r + dr;
+        let nc = c + dc;
+        if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE) {
+          reveal(nr, nc);
+        }
+      }
+    }
+  }
+}
+
+init();
+</script>
+
+</body>
+</html>
