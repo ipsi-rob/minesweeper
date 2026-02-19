@@ -1,6 +1,6 @@
 local display = display
-local SIZE = 9
-local MINES = 15
+local SIZE = 20
+local MINES = 30
 local cells = {}
 
 local mines = {}
