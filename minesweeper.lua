@@ -1,7 +1,7 @@
--- マインスイーパ最小サンプル
+- マインスイーパ最小サンプル
 local display = display
-local SIZE = 5
-local MINES = 5
+local SIZE = 9
+local MINES = 15
 local cells = {}
 
 -- ランダムに地雷を配置
