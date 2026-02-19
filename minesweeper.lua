@@ -1,10 +1,8 @@
-- マインスイーパ最小サンプル
 local display = display
 local SIZE = 9
 local MINES = 15
 local cells = {}
 
--- ランダムに地雷を配置
 local mines = {}
 for i = 1, MINES do
     local r, c
@@ -15,7 +13,7 @@ for i = 1, MINES do
     mines[r..","..c] = true
 end
 
--- セルを作る
+
 for r = 1, SIZE do
     cells[r] = {}
     for c = 1, SIZE do
